@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<products>
+<footwear>
+ <make code="NK1078">Nike</make>
+ <model>Libretto</model>
+ <price>49.99</price>
+</footwear>
+
+<footwear>
+ <make code="Ree678">Reebok</make>
+ <model>Classic Club</model>
+ <price>29.99</price>
+</footwear>
+
+<footwear>
+ <make code="ADI178">Adidas</make>
+ <model>St.Kilda</model>
+ <price>34.99</price>
+</footwear>
+</products>
+
+
+
