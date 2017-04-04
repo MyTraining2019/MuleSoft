@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messagebody>
+<header>
+<msgid>001</msgid>
+<msgdesc>food menu</msgdesc>
+</header>
+<breakfast_menu>
+<food>
+<name>Belgian Waffles</name>
+<price>$91.45</price>
+<description>Two of our famous Belgian Waffles with plenty of real maple syrup</description>
+<calories>350</calories>
+</food>
+<food>
+<name>Strawberry Belgian Waffles</name>
+<price>$7.45</price>
+<description>Light Belgian Waffles covered with strawberries and whipped cream </description>
+<calories>900</calories>
+</food>
+</breakfast_menu>
+</messagebody>
