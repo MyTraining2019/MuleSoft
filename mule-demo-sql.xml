@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:jdbc-ee="http://www.mulesoft.org/schema/mule/ee/jdbc" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/jdbc http://www.mulesoft.org/schema/mule/ee/jdbc/current/mule-jdbc-ee.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+   <configuration doc:name="Configuration">
+    	<expression-language autoResolveVariables="true">
+    		<import class="org.mule.util.StringUtils"/>
+    	</expression-language>
+    </configuration>
+    <jdbc-ee:mysql-data-source name="MySQL_Data_Source" user="root" password="admin" url="jdbc:mysql://localhost:3306/capdb" transactionIsolation="UNSPECIFIED" doc:name="MySQL Data Source"/>
+    <jdbc-ee:connector name="Database" dataSource-ref="MySQL_Data_Source" validateConnections="true" queryTimeout="-1" pollingFrequency="0" doc:name="Database">
+        <jdbc-ee:query key="insertrecord" value="insert into user_table values(#[message.payload[0]],#[message.payload[1]],#[message.payload[2]]);"/>
+    </jdbc-ee:connector>
+   
+    <flow name="mule-demo-sqlFlow">
+        <file:inbound-endpoint path="D:\vidavid\Training\2017\MuleSoft_16-dec\csv" responseTimeout="10000" doc:name="File"/>
+        <object-to-string-transformer doc:name="Object to String"/>
+        <splitter expression="#[StringUtils.split(message.payload,'\n\r')]" doc:name="Splitter"/>
+        <expression-transformer doc:name="Expression" expression="#[StringUtils.split(message.payload,',')]"/>
+        <jdbc-ee:outbound-endpoint connector-ref="Database" doc:name="Database" exchange-pattern="one-way" queryKey="insertrecord" queryTimeout="-1"/>
+    </flow>
+</mule>
