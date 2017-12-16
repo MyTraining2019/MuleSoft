@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:ftp="http://www.mulesoft.org/schema/mule/ee/ftp" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/ftp http://www.mulesoft.org/schema/mule/ee/ftp/current/mule-ftp-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd">
+    <db:mysql-config name="MySQL_Configuration" host="localhost" port="3306" user="root" password="admin" database="capdb" doc:name="MySQL Configuration"/>
+    <batch:job name="BatchProcess">
+        <batch:input>
+            <db:select config-ref="MySQL_Configuration" doc:name="Database">
+                <db:parameterized-query><![CDATA[select * from customer;]]></db:parameterized-query>
+            </db:select>
+        </batch:input>
+        <batch:process-records>
+            <batch:step name="Batch_Step">
+                <ftp:outbound-endpoint host="localhost" port="21" path="/output/batch1" user="muleuser" password="muleuser" responseTimeout="10000" doc:name="FTP"/>
+                <batch:set-record-variable variableName="greetings" value="HelloWorld!" doc:name="Record Variable"/>
+                <logger message="Batch Step1 - processed.  #[recordVars.greetings]" level="INFO" doc:name="Logger"/>
+            </batch:step>
+            <batch:step name="Batch_Step1">
+                <ftp:outbound-endpoint host="localhost" port="21" path="/output/batch2" user="muleuser" password="muleuser" responseTimeout="10000" doc:name="FTP"/>
+                <logger message="Batch Step2 - processed.   #[recordVars.greetings]" level="INFO" doc:name="Logger"/>
+            </batch:step>
+        </batch:process-records>
+        <batch:on-complete>
+            <logger message="Batch Process Completed.   #[recordVars.greetings]" level="INFO" doc:name="Logger"/>
+        </batch:on-complete>
+    </batch:job>
+    <flow name="day9-batch-processFlow">
+        <ftp:inbound-endpoint host="localhost" port="21" path="/input" user="muleuser" password="muleuser" responseTimeout="10000" doc:name="FTP"/>
+        <batch:execute name="BatchProcess" doc:name="BatchProcess"/>
+    </flow>
+</mule>
